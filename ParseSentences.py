@@ -12,6 +12,7 @@ Note: It is presumed that the data files are in a folder named "corpus". The cor
 folder is in the same folder as this script.
 """
 from modules import utilities
+from modules import nlp
 
 DATA_FOLDER = "./corpus"
 
@@ -20,7 +21,8 @@ def main():
     the_files = utilities.get_file_names(DATA_FOLDER)
     for file_name in the_files:
         content = utilities.get_content(DATA_FOLDER, file_name)
-        print(content[:50])
+        sentences = nlp.get_sentences(content)
+        print(len(sentences))
 
 if __name__ == '__main__':
     main()
