@@ -6,6 +6,8 @@ The functions in this script help keep the main scripts concise and readable.
 
     from modules import utilies
 """
+import pandas
+
 from os import listdir
 from os.path import isfile, join
 
@@ -43,3 +45,31 @@ def get_content(the_path, the_file):
     file_handle.close()
 
     return content
+
+def make_dataframe(sentences, file_name):
+    """ Transform the list of sentences into a dataframe
+
+    Make a dataframe that adds some metadata to the list of
+    sentences. Each row will contain one sentence, the name of the
+    source file and a zero based index of the sentence.
+
+    Args:
+        sentences: a list of sentences from a document
+        file_name: the name of the document containing the sentences
+
+    Returns:
+        A dataframe of the sentences and meta data.
+    """
+    return (pandas.DataFrame(data = { 'sentence': sentences })
+                  .assign(file_name = file_name, 
+                          location = lambda x: x.index))
+
+def corpus_metadata_file_name():
+    """ Return the name of the file containing sentences from the corpus
+
+    This is simply a file name constant that can be resused across modules
+
+    Returns:
+        The name of the file containing parsed sentences
+    """
+    return './output/corpos_metadata.csv'
