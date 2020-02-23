@@ -32,6 +32,8 @@ def main():
             ), 
             ignore_index = True)                                     # end of the .append function call
 
+    corpus['id'] = corpus.apply(utilities.rowIndex, axis = 1)
+    corpus = corpus.set_index('id')
     corpus.to_csv(utilities.corpus_metadata_file_name())
 
 if __name__ == '__main__':

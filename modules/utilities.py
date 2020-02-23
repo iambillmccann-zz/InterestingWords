@@ -64,12 +64,11 @@ def make_dataframe(sentences, file_name):
                   .assign(file_name = file_name, 
                           location = lambda x: x.index))
 
+def rowIndex(row):
+    return row.name
+
 def corpus_metadata_file_name():
-    """ Return the name of the file containing sentences from the corpus
+    return './output/corpus_metadata.csv'
 
-    This is simply a file name constant that can be resused across modules
-
-    Returns:
-        The name of the file containing parsed sentences
-    """
-    return './output/corpos_metadata.csv'
+def corpus_with_sentiment():
+    return './output/corpus_sentiment.csv'
