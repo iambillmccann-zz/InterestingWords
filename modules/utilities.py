@@ -72,3 +72,6 @@ def corpus_metadata_file_name():
 
 def corpus_with_sentiment():
     return './output/corpus_sentiment.csv'
+
+def corpus_pos():
+    return './output/corpus_pos.csv'

@@ -9,6 +9,11 @@ are used.
     from modules import nlp
 """
 from nltk import sent_tokenize
+from nltk import word_tokenize
+from nltk import pos_tag
+from nltk.corpus import stopwords
+
+stop_words = set(stopwords.words('english')) 
 
 def get_sentences(content):
     """ Retrieve the sentences from a string of text
@@ -25,3 +30,9 @@ def get_sentences(content):
         A list of sentences
     """
     return sent_tokenize(content)
+
+def tag_parts_of_speech(sentence):
+
+    words = word_tokenize(sentence)
+    words = [w for w in words if not w in stop_words]
+    return pos_tag(words)
