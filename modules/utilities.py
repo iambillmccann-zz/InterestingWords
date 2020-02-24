@@ -7,6 +7,7 @@ The functions in this script help keep the main scripts concise and readable.
     from modules import utilies
 """
 import pandas
+import json
 
 from os import listdir
 from os.path import isfile, join
@@ -64,6 +65,35 @@ def make_dataframe(sentences, file_name):
                   .assign(file_name = file_name, 
                           location = lambda x: x.index))
 
+def word_frequency(df_words, type = 'all'):
+    """ Return a list of words of a given type
+
+    This function works using brute force methods; i.e. looping through
+    the dataframe and then through the words from each sentence. I can
+    get away with this method because the amount of data is very small.
+
+    Args:
+        df_words: the dataframe from the corpus. The label and parts_of_speech
+                  columns must be present.
+        type:     "pos" for positive, "neg" for negative, or "all"
+
+    Returns:
+        a list of words of the given type
+    """
+    df = df_words if type == 'all' else df_words[df_words.label == type]
+    words = []
+    for index, row in df.iterrows():                                 # iterate over all sentences
+        word_list = json.loads(row['parts_of_speech'])
+        for word in word_list:                                       # iterate over the words in the sentence
+            the_word = "not" if word[0] == "n't" else word[0]
+            words.append(the_word)                                   # add the word to the full list
+
+    df = pandas.DataFrame(words, columns = ['word'])
+    freq_dict = ( df.assign(count = 1)
+                    .groupby('word')['count'].count() )
+    df = pandas.DataFrame.from_dict(freq_dict).sort_values(by = ['count'], ascending = False)
+    return df
+
 def rowIndex(row):
     return row.name
 
@@ -75,3 +105,15 @@ def corpus_with_sentiment():
 
 def corpus_pos():
     return './output/corpus_pos.csv'
+
+def negative_words():
+    return './output/negative_words.csv'
+
+def positive_words():
+    return './output/positive_words.csv'
+
+def all_words():
+    return './output/all_words.csv'
+
+def interesting_words():
+    return './output/interesting_words.csv'

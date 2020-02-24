@@ -8,12 +8,14 @@ are used.
 
     from modules import nlp
 """
+import json
 from nltk import sent_tokenize
 from nltk import word_tokenize
 from nltk import pos_tag
 from nltk.corpus import stopwords
 
-stop_words = set(stopwords.words('english')) 
+stop_words = set(stopwords.words('english'))
+INTERESTING_WORDS = ['JJ', 'JJR', 'JJS', 'RB', 'RBR', 'RBS']
 
 def get_sentences(content):
     """ Retrieve the sentences from a string of text
@@ -32,7 +34,33 @@ def get_sentences(content):
     return sent_tokenize(content)
 
 def tag_parts_of_speech(sentence):
+    """ Use NLTK to tag parts of speech
 
+    Call nltk word_tokenize to tag POS. Also filter out stop words. I am using
+    the nltk default English stop words.
+
+    Args:
+        sentence: a sentence or phrase to tag POS
+
+    Returns:
+        list of tagged words
+    """
     words = word_tokenize(sentence)
     words = [w for w in words if not w in stop_words]
-    return pos_tag(words)
+    return json.dumps(pos_tag(words))
+
+def filter_descriptive_words(parts_of_speech):
+    """ Filter out words that are not interesting
+
+    Check the tags on the words to verify that they are adjectives or adverbs.
+    The list of appropriate tags is contained in the constant INTERESTING_WORDS.
+
+    Args:
+        parts_of_speech: A serialized json string containing the list of tagged words.
+
+    Returns:
+        A serialized json string of adjectives and adverbs.
+    """
+    words = json.loads(parts_of_speech)
+    words = [ word for word in words if word[1] in INTERESTING_WORDS ]
+    return json.dumps(words)
