@@ -16,9 +16,9 @@ from modules import utilities
 
 def main():
 
-    corpus = pandas.read_csv(utilities.corpus_with_sentiment(), index_col = 'id')
+    corpus = pandas.read_csv(utilities.CORPUS_WITH_SENTIMENT, index_col = 'id')
     corpus['parts_of_speech'] = corpus.apply(lambda row: nlp.tag_parts_of_speech(row['sentence']), axis=1)
-    corpus.to_csv(utilities.corpus_pos())
+    corpus.to_csv(utilities.CORPUS_POS)
 
 if __name__ == '__main__':
     main()

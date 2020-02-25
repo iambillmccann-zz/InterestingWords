@@ -34,14 +34,9 @@ from modules import nlp
 
 def main():
 
-    corpus = pandas.read_csv(utilities.corpus_pos(), index_col = 'id')   # read the POS tagged sentences
-    words = corpus[corpus.label != 'neutral']                            # filter out the neutral sentences
-    words = ( words.drop(['sentence'], axis = 1)                         # drop columns not needed for this part of the analysis
-                    .drop(['file_name'], axis = 1)
-                    .drop(['location'], axis = 1)
-                    .drop(['negative'], axis = 1)
-                    .drop(['positive'], axis = 1)
-                    .drop(['neutral'], axis = 1) )
+    corpus = pandas.read_csv(utilities.CORPUS_POS, index_col = 'id')   # read the POS tagged sentences
+    words = corpus[corpus.label != 'neutral']                          # filter out the neutral sentences
+    words = words.drop(['sentence', 'file_name', 'location', 'negative', 'positive', 'neutral'], axis = 1)
 
     words['parts_of_speech'] = words.apply(lambda row: nlp.filter_descriptive_words(row['parts_of_speech']), axis = 1)
     words = words[words.parts_of_speech != '[]']                       # remove sentences without adjectives nor adverbs
@@ -51,14 +46,14 @@ def main():
     all_words      = utilities.word_frequency(corpus)
 
     interesting_words = ( pandas.concat([positive_words, negative_words])
-                            .groupby('word')
-                            .agg( count = pandas.NamedAgg(column = 'count', aggfunc = sum) )
-                            .sort_values(by = ['count'], ascending = False) )
+        .groupby('word')
+        .agg( count = ('count', sum) )             # combine words that are both positive and negative
+        .sort_values(by = ['count'], ascending = False) )
 
-    positive_words.to_csv(utilities.positive_words())
-    negative_words.to_csv(utilities.negative_words())
-    all_words.to_csv(utilities.all_words())
-    interesting_words.to_csv(utilities.interesting_words())
+    positive_words.to_csv(utilities.POSITIVE_WORDS)
+    negative_words.to_csv(utilities.NEGATIVE_WORDS)
+    all_words.to_csv(utilities.ALL_WORDS)
+    interesting_words.to_csv(utilities.INTERESTING_WORDS)
 
 if __name__ == '__main__':
     main()

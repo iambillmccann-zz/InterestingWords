@@ -34,7 +34,7 @@ def main():
 
     corpus['id'] = corpus.apply(utilities.rowIndex, axis = 1)
     corpus = corpus.set_index('id')
-    corpus.to_csv(utilities.corpus_metadata_file_name())
+    corpus.to_csv(utilities.CORPUS_METADATA_FILE_NAME)
 
 if __name__ == '__main__':
     main()

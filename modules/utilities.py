@@ -12,6 +12,16 @@ import json
 from os import listdir
 from os.path import isfile, join
 
+# File location constants
+CORPUS_METADATA_FILE_NAME = './output/corpus_metadata.csv'
+CORPUS_WITH_SENTIMENT = './output/corpus_sentiment.csv'
+CORPUS_POS = './output/corpus_pos.csv'
+NEGATIVE_WORDS = './output/negative_words.csv'
+POSITIVE_WORDS = './output/positive_words.csv'
+ALL_WORDS = './output/all_words.csv'
+INTERESTING_WORDS = './output/interesting_words.csv'
+FINAL_REPORT = './output/final_report.csv'
+
 def get_file_names(the_path):
     """ Retrieve a list of file names for a folder
 
@@ -94,26 +104,69 @@ def word_frequency(df_words, type = 'all'):
     df = pandas.DataFrame.from_dict(freq_dict).sort_values(by = ['count'], ascending = False)
     return df
 
+def str_of_file_name(files):
+    """ Construct a string of file names
+
+    Using a pandas series that contains file names that a word shows up in, transform it into
+    a string that can be displayed on a report. This uses a brute force method of de-duping
+    the list.
+
+    Args:
+        files:  A pandas series containing file names.
+
+    Returns:
+        A string of file names delimited by a space
+    """
+    file_name_str = ''
+    previous = ''
+    for index, value in files.items():
+        if value != previous:
+            file_name_str += value.split('.')[0] + ' '
+        previous = value
+    return file_name_str
+
+def str_of_sentences(sentences):
+    """ Construct a string of sentences
+
+    Using a pandas series that contains sentences containing a word, transform it into a string
+    that can be displayed on a report.
+
+    Args:
+        sentences: A pandas series containing sentences.
+
+    Returns:
+        A string of sentences delimited by \n\n (two new lines)
+    """
+    sentence_str = ''
+    for index, value in sentences.items():
+        sentence_str += value + '\n\n'
+    return sentence_str
+
+def map_words(corpus_pos):
+    """ This function returns a mapping between a word and the sentences it appears in
+
+    This uses a brute for method (for loops) to transpose the word/POS pairs into a
+    mapping.
+
+    Args:
+        The full corpus including POS tagged words
+
+    Returns:
+        A dataframe of two columns; the word and a list of ids of the sentence
+    """
+    words = []
+    for index, row in corpus_pos.iterrows():
+        word_list = json.loads(row['parts_of_speech'])
+        for word in word_list:
+            the_word = "not" if word[0] == "n't" else word[0]
+            words.append([the_word, row['file_name'], row['sentence']])
+
+    df = pandas.DataFrame(words, columns = ['word', 'file_name', 'sentence'])           # make a dataframe with a word on each row
+    df_counts = pandas.DataFrame.from_dict( df.groupby('word')['sentence'].count() )    # count words
+    df_files = df.groupby('word').agg( files = ('file_name', str_of_file_name))         # list of containing files
+    df_sentences = df.groupby('word').agg( sentences = ('sentence', str_of_sentences) ) # list of containing sentences
+
+    return df_counts.join(df_files).join(df_sentences).rename(columns = {"sentence" : "count"})
+
 def rowIndex(row):
     return row.name
-
-def corpus_metadata_file_name():
-    return './output/corpus_metadata.csv'
-
-def corpus_with_sentiment():
-    return './output/corpus_sentiment.csv'
-
-def corpus_pos():
-    return './output/corpus_pos.csv'
-
-def negative_words():
-    return './output/negative_words.csv'
-
-def positive_words():
-    return './output/positive_words.csv'
-
-def all_words():
-    return './output/all_words.csv'
-
-def interesting_words():
-    return './output/interesting_words.csv'

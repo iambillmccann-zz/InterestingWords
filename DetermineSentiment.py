@@ -27,7 +27,7 @@ from modules import restclient
 
 def main():
 
-    corpus = pandas.read_csv(utilities.corpus_metadata_file_name(), index_col = 'id')
+    corpus = pandas.read_csv(utilities.CORPUS_METADATA_FILE_NAME, index_col = 'id')
     
     # make the API calls
     try:
@@ -44,7 +44,7 @@ def main():
     
     # drop the http response and write the dataframe to disk
     ( corpus.drop(['result'], axis = 1)
-        .to_csv(utilities.corpus_with_sentiment()) )
+        .to_csv(utilities.CORPUS_WITH_SENTIMENT) )
 
 if __name__ == '__main__':
     main()
