@@ -11,4 +11,8 @@ This project will read text documents and perform an analysis on what are the in
 
 ## Findings ##
 
-## 
+## Setup and Execute ##
+
+## Solution Architecture ##
+
+## Ideas for Improvement ##
