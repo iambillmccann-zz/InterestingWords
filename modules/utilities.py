@@ -71,9 +71,9 @@ def make_dataframe(sentences, file_name):
     Returns:
         A dataframe of the sentences and meta data.
     """
-    return (pandas.DataFrame(data = { 'sentence': sentences })
-                  .assign(file_name = file_name, 
-                          location = lambda x: x.index))
+    return ( pandas.DataFrame(data = { 'sentence': sentences })
+                .assign(file_name = file_name, 
+                        location = lambda x: x.index) )
 
 def word_frequency(df_words, type = 'all'):
     """ Return a list of words of a given type
@@ -83,9 +83,9 @@ def word_frequency(df_words, type = 'all'):
     get away with this method because the amount of data is very small.
 
     Args:
-        df_words: the dataframe from the corpus. The label and parts_of_speech
-                  columns must be present.
-        type:     "pos" for positive, "neg" for negative, or "all"
+        df_words:   the dataframe from the corpus. The label and parts_of_speech
+                    columns must be present.
+        type:       "pos" for positive, "neg" for negative, or "all"
 
     Returns:
         a list of words of the given type
